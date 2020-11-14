@@ -3,6 +3,9 @@
 
 
 ## TODO:
+- Refactor Property
+
+- Change usage of build in name variables... property
 
 - schamas with multiple instance_of types
 
