@@ -42,7 +42,7 @@ class TestPropertiesDefault(unittest.TestCase):
         class Thing(Schema):
             name = TextProperty(default="default")
         class Thing2(Schema):
-            other = ClassProperty("Thing",default=Thing(name="name1"))
+            other = ClassProperty("Thing", default=Thing(name="name1"))
         thing2 = Thing2()
         self.assertEqual(thing2.other.name, "name1")
         thing2.other.name = "new_name"
@@ -51,10 +51,13 @@ class TestPropertiesDefault(unittest.TestCase):
     def test_properties_mix(self):
         class Thing(Schema):
             name = TextProperty(default="default")
-        class Thing2(Schema):
+
+        class Thing2(Schema):  # NOSONAR
             name2 = TextProperty(default="default2")
+
         class Thing3(Schema):
             other = ClassPropertyMix(["Thing", "Thing2"],default=Thing(name="name1"))
+
         thing3 = Thing3()
         self.assertEqual(thing3.other.name, "name1")
         thing3.other.name = "new_name"

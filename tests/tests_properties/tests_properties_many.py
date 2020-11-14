@@ -40,7 +40,7 @@ class TestPropertiesMany(unittest.TestCase):
         thing = Thing()
         thing.names.append("name1")
         thing.names.append("name2")
-        json_data = thing.dump()
+        json_data = thing.save()
         self.assertEqual(len(json_data["names"]), 2)
         self.assertTrue("name1" in json_data["names"])
         self.assertTrue("name2" in json_data["names"])

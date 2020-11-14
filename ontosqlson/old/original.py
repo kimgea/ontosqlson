@@ -65,7 +65,7 @@ class Options:
 
         return self.ascendants
 
-    def contribute_to_class(self, cls, name):
+    def contribute_to_class(self, cls):  # NOSONAR
         cls._meta = self
         self.model = cls
 
@@ -189,7 +189,7 @@ class Schema(metaclass=SchemaBase):
             if instance_of != self._meta.schema_class_name:
                 raise ValueError("Invalid Schema class: {schema_class_name} not in {instance_of}".format(
                     schema_class_name=self._meta.schema_class_name, instance_of=instance_of))
-        except:
+        except ValueError:  # NOSONAR
             if self._meta.schema_class_name not in instance_of:
                 raise ValueError("Invalid Schema class: {schema_class_name} not in {instance_of}".format(
                     schema_class_name=self._meta.schema_class_name, instance_of=instance_of))
@@ -213,7 +213,7 @@ class Schema(metaclass=SchemaBase):
         fields = self._get_fields(schema_field_only=True)
         for field in fields:
             if getattr(getattr(getattr(self, field), "_meta", {}), "schema_class_name", None) is not None:
-                data[field] = getattr(self, field).dump(data[field])
+                data[field] = getattr(self, field).save(data[field])
             else:
                 data[field] = getattr(self, field)
         return data
@@ -279,8 +279,8 @@ class SchemaPropertyBase(object):
     def __get__(self, instance, owner):
         if instance is None:
             return self
-        if self._many:
-            if instance not in self.values:
+        if self._many:  # NOSONAR
+            if instance not in self.values:  # NOSONAR
                 self.values[instance] = []
         return self.values.get(instance, self.default)
 

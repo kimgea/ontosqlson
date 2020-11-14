@@ -1,82 +1,70 @@
-import inspect
 from ontosqlson.schema_base import SchemaBase
-from ontosqlson.ontology import Ontology
 
 
 class Schema(metaclass=SchemaBase):
     def __init__(self, **kwargs):
-
-        self._ontology = Ontology()
-
-        fields = self._get_fields()
-        if kwargs:
-            for key in kwargs.keys():
-                if key in fields:
-                    setattr(self, key, kwargs[key])
         super().__init__()
+        for key in kwargs.keys():
+            setattr(self, key, kwargs[key])
 
     def load(self, data):
-        instance_of = data[self._meta.instance_of_field_name]
-        if instance_of != self._meta.schema_class_name:
-            raise ValueError("Invalid Schema class: {schema_class_name} not in {instance_of}".format(
-                schema_class_name=self._meta.schema_class_name, instance_of=instance_of))
+        meta = self._meta
 
-        # TODO: Code below is suposed to be for when a class can be part of multiple schemas.... but not working. second part match against partial strings, not only lists
-        """try:
-            if instance_of != self._meta.schema_class_name:
+        def ensure_model_exist():
+            instance_of = data[meta.instance_of_field_name]
+            if instance_of != meta.schema_class_name:
                 raise ValueError("Invalid Schema class: {schema_class_name} not in {instance_of}".format(
-                    schema_class_name=self._meta.schema_class_name, instance_of=instance_of))
-        except:
-            if self._meta.schema_class_name not in instance_of:
-                raise ValueError("Invalid Schema class: {schema_class_name} not in {instance_of}".format(
-                    schema_class_name=self._meta.schema_class_name, instance_of=instance_of))"""
+                    schema_class_name=meta.schema_class_name, instance_of=instance_of))
 
-        for property_name in data.keys():
-            attribute_name = self._property_name_attribute_name_lookup.get(property_name, property_name)
-            try:
-                if getattr(self, attribute_name)._is_schema_property:
-                    property_name = getattr(self, attribute_name).property_name
-            except AttributeError:
-                pass
+        def get_class_attribute_name(schema_property_name):
+            return meta.property_name_attribute_name_lookup.get(
+                schema_property_name, schema_property_name)
 
-            value = data[property_name]
-            try:
-                if self._meta.instance_of_field_name in value:
-                    obj = self._meta.schema_collection.schema_models[value[self._meta.instance_of_field_name]]()
-                    obj.load(value)
-                    value = obj
-            except TypeError:
-                pass
-            setattr(self, attribute_name, value)
+        def try_load_related_model(value):
+            schema_model = meta.schema_collection.schema_models.get(value.get(meta.instance_of_field_name, {}), None)
+            if schema_model is not None:
+                return create_schema_instance(schema_model, value)
 
-    def dump(self, data=None):
+        def is_schema(value):
+            return meta.instance_of_field_name in value and not isinstance(value, str)
+
+        ensure_model_exist()
+
+        for schema_property_name in data:
+            value = data[schema_property_name]
+            if is_schema(value):
+                value = try_load_related_model(value)
+
+            class_attribute_name = get_class_attribute_name(schema_property_name)
+            setattr(self, class_attribute_name, value)
+
+    def save(self, data=None):
+        def get_schema_property_name(class_attribute_name):
+            return self._meta.attribute_name_property_name_lookup.get(class_attribute_name, class_attribute_name)
+
+        def get_value(class_attribute_value):
+            if is_schema(class_attribute_value):
+                return class_attribute_value.save()
+            return class_attribute_value
+
+        def is_schema(class_attribute_value):
+            return getattr(getattr(class_attribute_value, "_meta", {}), "schema_class_name", None) is not None
+
         if data is None:
             data = dict()
-        fields = self._get_fields(schema_field_only=True)
-        for key in fields:
-            property_name = self._attribute_name_property_name_lookup.get(key, key)
-            if getattr(getattr(getattr(self, key), "_meta", {}), "schema_class_name", None) is not None:
-                data[property_name] = getattr(self, key).dump(data[key])
-            else:
-                data[property_name] = getattr(self, key)
-        data[self._meta.instance_of_field_name] = self._meta.schema_class_name
+
+        meta = self._meta
+
+        for class_attribute_name in meta.schema_fields:
+            schema_property_name = get_schema_property_name(class_attribute_name)
+            data[schema_property_name] = get_value(getattr(self, class_attribute_name))
+
+        data[meta.instance_of_field_name] = meta.schema_class_name
+
         return data
 
-    def _get_fields(self, schema_field_only=False):
-        def _include_attr(attr):
-            if attr.startswith("__"):
-                return False
-            if callable(getattr(self, attr)):
-                return False
-            if schema_field_only:
-                if getattr(getattr(self._meta.concrete_model, attr, {}), "_is_schema_property", False):
-                    return True
-                return False
-
-            return True
-        return set([attr[0] for attr in inspect.getmembers(self) if _include_attr(attr[0])])
-
     def _is_schema_type(self, schema_type):
+        # TODO: Refactore this... Used by preoperty, wait until then
         if isinstance(schema_type, str):
             if self._meta.schema_class_name == schema_type:
                 return True
@@ -90,4 +78,12 @@ class Schema(metaclass=SchemaBase):
             if ascendant._meta.concrete_model == schema_type:
                 return True
         return False
+
+
+def create_schema_instance(schema, data):
+    obj = schema()
+    obj.load(data)
+    return obj
+
+    ####################################################################################################################
 

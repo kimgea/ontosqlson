@@ -39,7 +39,7 @@ class TestPropertyRegistration(unittest.TestCase):
         class Thing(Schema):
             name = TextProperty()
         ontology = Ontology()
-        thing = Thing()
+        thing = Thing()  # NOSONAR
         self.assertTrue("name" in ontology.schema_properties)
         self.assertEqual(len(ontology.schema_properties), 1)
 
@@ -48,7 +48,7 @@ class TestPropertyRegistration(unittest.TestCase):
         class Thing(Schema):
             name = TextProperty()
         ontology = Ontology()
-        thing = Thing()
+        thing = Thing()  # NOSONAR
         self.assertTrue("name" in ontology.schema_properties)
         self.assertEqual(len(ontology.schema_properties), 1)
 
@@ -56,7 +56,7 @@ class TestPropertyRegistration(unittest.TestCase):
         class Thing(Schema):
             name = TextProperty(property_name="name_custom")
         ontology = Ontology()
-        thing = Thing()
+        thing = Thing()  # NOSONAR
         self.assertFalse("name" in ontology.schema_properties)
         self.assertTrue("name_custom" in ontology.schema_properties)
         self.assertEqual(len(ontology.schema_properties), 1)
@@ -68,8 +68,8 @@ class TestPropertyRegistration(unittest.TestCase):
         class Thing2(Schema):
             name = TextProperty()
         ontology = Ontology()
-        thing = Thing()
-        thing2 = Thing2()
+        thing = Thing()  # NOSONAR
+        thing2 = Thing2()  # NOSONAR
         self.assertFalse("name_other" in ontology.schema_properties)
         self.assertTrue("name" in ontology.schema_properties)
         self.assertEqual(len(ontology.schema_properties), 1)
@@ -82,8 +82,8 @@ class TestPropertyRegistration(unittest.TestCase):
             name = TextProperty(property_name="name_custom")
 
         ontology = Ontology()
-        thing = Thing()
-        thing2 = Thing2()
+        thing = Thing()  # NOSONAR
+        thing2 = Thing2()  # NOSONAR
         self.assertFalse("name" in ontology.schema_properties)
         self.assertFalse("name_other" in ontology.schema_properties)
         self.assertTrue("name_custom" in ontology.schema_properties)
@@ -95,7 +95,7 @@ class TestPropertyRegistration(unittest.TestCase):
 
         class Thing(Schema):
             name = ontology.schema_properties["name"]
-        thing = Thing()
+        thing = Thing()  # NOSONAR
         self.assertTrue("name" in ontology.schema_properties)
         self.assertEqual(len(ontology.schema_properties), 1)
 
@@ -105,7 +105,7 @@ class TestPropertyRegistration(unittest.TestCase):
         class Thing(Schema):
             name = name_property
 
-        thing = Thing()
+        thing = Thing()  # NOSONAR
         ontology = Ontology()
         self.assertTrue("name" in ontology.schema_properties)
         self.assertEqual(len(ontology.schema_properties), 1)
@@ -139,9 +139,9 @@ class TestPropertyRegistration(unittest.TestCase):
         class Thing3(Schema):
             mix_two = ClassPropertyMix([Thing, Thing2], property_name="mix_two_custom")
 
-        thing = Thing()
-        thing2 = Thing2()
-        thing3 = Thing3()
+        thing = Thing()  # NOSONAR
+        thing2 = Thing2()  # NOSONAR
+        thing3 = Thing3()  # NOSONAR
 
         self.assertTrue("name" in ontology.schema_properties)
         self.assertTrue("name_two" in ontology.schema_properties)
