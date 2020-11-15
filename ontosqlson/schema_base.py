@@ -1,7 +1,7 @@
 import inspect
 import abc
 from ontosqlson.meta import set_meta
-from ontosqlson.property_base import SchemaPropertyBase, _register_property
+from ontosqlson.field.field_base import SchemaFieldBase, _register_field
 
 
 class SchemaBase(abc.ABCMeta):
@@ -20,8 +20,8 @@ class SchemaBase(abc.ABCMeta):
         _register_schema(new_class)
         _set_fields(new_class)
 
-        _register_properties(new_class)
-        _map_property_key_an_name(new_class)
+        _register_fields(new_class)
+        _map_field_key_and_name(new_class)
 
         return new_class
 
@@ -31,17 +31,17 @@ def _register_schema(new_class):
     meta.schema_collection.register_schema_model(meta.schema_class_name, meta.concrete_model)
 
 
-def _register_properties(new_class):
+def _register_fields(new_class):
     for key in new_class._meta.schema_fields:
-        _register_property(getattr(new_class, key), key)
+        _register_field(getattr(new_class, key), key)
 
 
-def _map_property_key_an_name(new_class):
+def _map_field_key_and_name(new_class):
     meta = new_class._meta
     for key in meta.schema_fields:
-        property_name = getattr(new_class, key).property_name
-        meta.property_name_attribute_name_lookup[property_name] = key
-        meta.attribute_name_property_name_lookup[key] = property_name
+        field_name = getattr(new_class, key).field_name
+        meta.field_attribute_name_map[field_name] = key
+        meta.attribute_field_name_map[key] = field_name
 
 
 def _set_fields(new_class):
@@ -54,7 +54,7 @@ def _set_fields(new_class):
             continue  # Skipp functions
 
         schema_field_or_empty = getattr(new_class._meta.concrete_model, key, {})
-        is_schema_field = isinstance(schema_field_or_empty, SchemaPropertyBase)
+        is_schema_field = isinstance(schema_field_or_empty, SchemaFieldBase)
 
         if is_schema_field:
             new_class._meta.schema_fields.append(key)

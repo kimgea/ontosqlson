@@ -1,22 +1,19 @@
 import unittest
 from ontosqlson.ontology import Ontology
 from ontosqlson.schema import Schema
-from ontosqlson.properties import (TextProperty,
-                                   IntegerProperty,
-                                   PositiveIntegerProperty,
-                                   ClassProperty,
-                                   ClassPropertyMix)
+from ontosqlson.field import (TextField,
+                              IntegerField)
 
 
 class TestSchemaMetaSettings(unittest.TestCase):
     def setUp(self):
         ontology = Ontology()
-        ontology.schema_properties.clear()
+        ontology.schema_fields.clear()
         ontology.schema_models.clear()
 
     def test_schema_class_name_custom(self):
         class Thing(Schema):
-            name = TextProperty()
+            name = TextField()
             class Meta:
                 schema_class_name = "ThingOther"
         thing = Thing()
@@ -30,7 +27,7 @@ class TestSchemaMetaSettings(unittest.TestCase):
 
     def test_schema_object_name(self):
         class Thing(Schema):
-            name = TextProperty()
+            name = TextField()
             class Meta:
                 schema_class_name = "ThingOther"
         thing = Thing(name="test")
@@ -39,16 +36,16 @@ class TestSchemaMetaSettings(unittest.TestCase):
 
     def test_meta_schema_class_name_inheritance(self):
         class NameThing(Schema):
-            name = TextProperty()
+            name = TextField()
 
             class Meta:
                 schema_class_name = "ThingOther2"
 
         class NumberThing(NameThing):
-            number = IntegerProperty()
+            number = IntegerField()
 
         class NumberThing2(NumberThing):
-            number2 = IntegerProperty()
+            number2 = IntegerField()
 
             class Meta:
                 schema_class_name = "ThingOther"
@@ -64,7 +61,7 @@ class TestSchemaMetaSettings(unittest.TestCase):
 
     def test_instance_of_field_name_custom(self):
         class Thing(Schema):
-            name = TextProperty()
+            name = TextField()
             class Meta:
                 instance_of_field_name = "is_type"
         thing = Thing()
@@ -78,19 +75,19 @@ class TestSchemaMetaSettings(unittest.TestCase):
 
     def test_meta_parents_count(self):
         class NameThing(Schema):
-            name = TextProperty()
+            name = TextField()
 
         class NumberThing(NameThing):
-            number = IntegerProperty()
+            number = IntegerField()
 
         class NumberThing2(NumberThing):
-            number2 = IntegerProperty()
+            number2 = IntegerField()
 
         class NameThing2(Schema):
-            name = TextProperty()
+            name = TextField()
 
         class NumberThing3(NameThing2, NumberThing2):
-            number2 = IntegerProperty()
+            number2 = IntegerField()
 
         name_thing = NameThing(name="name_1")
         number_thing = NumberThing(name="name_2", number=2)
@@ -104,13 +101,13 @@ class TestSchemaMetaSettings(unittest.TestCase):
 
     def test_meta_ascendants_count(self):
         class NameThing(Schema):
-            name = TextProperty()
+            name = TextField()
 
         class NumberThing(NameThing):
-            number = IntegerProperty()
+            number = IntegerField()
 
         class NumberThing2(NumberThing):
-            number2 = IntegerProperty()
+            number2 = IntegerField()
 
         name_thing = NameThing(name="name_1")
         number_thing = NumberThing(name="name_2", number=2)
@@ -122,13 +119,13 @@ class TestSchemaMetaSettings(unittest.TestCase):
 
     def test_meta_concrete_model(self):
         class NameThing(Schema):
-            name = TextProperty()
+            name = TextField()
 
         class NumberThing(NameThing):
-            number = IntegerProperty()
+            number = IntegerField()
 
         class NumberThing2(NumberThing):
-            number2 = IntegerProperty()
+            number2 = IntegerField()
 
         name_thing = NameThing(name="name_1")
         number_thing = NumberThing(name="name_2", number=2)

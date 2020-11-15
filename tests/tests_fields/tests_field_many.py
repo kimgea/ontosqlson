@@ -1,22 +1,18 @@
 import unittest
 from ontosqlson.ontology import Ontology
 from ontosqlson.schema import Schema
-from ontosqlson.properties import (TextProperty,
-                                   IntegerProperty,
-                                   PositiveIntegerProperty,
-                                   ClassProperty,
-                                   ClassPropertyMix)
+from ontosqlson.field import (TextField)
 
 
-class TestPropertiesMany(unittest.TestCase):
+class TestFieldMany(unittest.TestCase):
     def setUp(self):
         ontology = Ontology()
-        ontology.schema_properties.clear()
+        ontology.schema_fields.clear()
         ontology.schema_models.clear()
 
-    def test_properties_many_basic(self):
+    def test_field_many_basic(self):
         class Thing(Schema):
-            names = TextProperty(many=True)
+            names = TextField(many=True)
         thing = Thing()
         thing.names.append("name1")
         thing.names.append("name2")
@@ -24,9 +20,9 @@ class TestPropertiesMany(unittest.TestCase):
         self.assertTrue("name1" in thing.names)
         self.assertTrue("name2" in thing.names)
 
-    def test_properties_many_load(self):
+    def test_field_many_load(self):
         class Thing(Schema):
-            names = TextProperty(many=True)
+            names = TextField(many=True)
         thing = Thing()
         json_data = {"instance_of": "Thing", "names": ["name1", "name2"]}
         thing.load(json_data)
@@ -34,9 +30,9 @@ class TestPropertiesMany(unittest.TestCase):
         self.assertTrue("name1" in thing.names)
         self.assertTrue("name2" in thing.names)
 
-    def test_properties_many_save(self):
+    def test_field_many_save(self):
         class Thing(Schema):
-            names = TextProperty(many=True)
+            names = TextField(many=True)
         thing = Thing()
         thing.names.append("name1")
         thing.names.append("name2")

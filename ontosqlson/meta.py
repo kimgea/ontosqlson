@@ -14,8 +14,8 @@ class Meta:
         self.instance_of_field_name = "instance_of"
         self.parents = OrderedDict()
         self.ascendants = dict()
-        self.property_name_attribute_name_lookup = {}
-        self.attribute_name_property_name_lookup = {}
+        self.field_attribute_name_map = {}
+        self.attribute_field_name_map = {}
         self.schema_collection = Ontology()
 
         self.schema_fields = []

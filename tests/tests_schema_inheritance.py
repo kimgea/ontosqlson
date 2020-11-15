@@ -1,28 +1,25 @@
 import unittest
 from ontosqlson.ontology import Ontology
 from ontosqlson.schema import Schema
-from ontosqlson.properties import (TextProperty,
-                                   IntegerProperty,
-                                   PositiveIntegerProperty,
-                                   ClassProperty,
-                                   ClassPropertyMix)
+from ontosqlson.field import (TextField,
+                              IntegerField)
 
 
-# TODO: schema should not be alowed to have a property that already exist in one of its ancestors
+# TODO: schema should not be alowed to have a field that already exist in one of its ancestors
 
 
 class TestSchemaInheritance(unittest.TestCase):
     def setUp(self):
         ontology = Ontology()
-        ontology.schema_properties.clear()
+        ontology.schema_fields.clear()
         ontology.schema_models.clear()
 
     def test_schema_inheritance_basic(self):
         class NameThing(Schema):
-            name = TextProperty()
+            name = TextField()
 
         class NumberThing(NameThing):
-            number = IntegerProperty()
+            number = IntegerField()
 
         name_thing = NameThing()
         number_thing = NumberThing()
@@ -44,7 +41,7 @@ class TestSchemaInheritance(unittest.TestCase):
 
     def test_schema_inheritance_init_subclass(self):
         class NameThing(Schema):
-            name = TextProperty()
+            name = TextField()
             _registry = dict()
 
             def __init_subclass__(cls, reg_name=None, **kwargs):
@@ -53,10 +50,10 @@ class TestSchemaInheritance(unittest.TestCase):
                     cls._registry[reg_name] = cls
 
         class NumberThing(NameThing, reg_name="test"):
-            number = IntegerProperty()
+            number = IntegerField()
 
         class NumberThing2(NameThing):
-            number2 = IntegerProperty()
+            number2 = IntegerField()
 
         name_thing = NameThing(name="name_1")
         number_thing = NumberThing(name="name_2", number=2)
@@ -79,10 +76,10 @@ class TestSchemaInheritance(unittest.TestCase):
                 return self.age >= 18
 
         class NameThing(Schema):
-            name = TextProperty()
+            name = TextField()
 
         class Person(MixIn, NameThing, Schema):
-            age = IntegerProperty()
+            age = IntegerField()
 
         person = Person(age=30)
         person2 = Person(age=15)

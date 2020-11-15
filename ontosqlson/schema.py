@@ -16,9 +16,9 @@ class Schema(metaclass=SchemaBase):
                 raise ValueError("Invalid Schema class: {schema_class_name} not in {instance_of}".format(
                     schema_class_name=meta.schema_class_name, instance_of=instance_of))
 
-        def get_class_attribute_name(schema_property_name):
-            return meta.property_name_attribute_name_lookup.get(
-                schema_property_name, schema_property_name)
+        def get_class_attribute_name(schema_field_name):
+            return meta.field_attribute_name_map.get(
+                schema_field_name, schema_field_name)
 
         def try_load_related_model(value):
             schema_model = meta.schema_collection.schema_models.get(value.get(meta.instance_of_field_name, {}), None)
@@ -30,17 +30,17 @@ class Schema(metaclass=SchemaBase):
 
         ensure_model_exist()
 
-        for schema_property_name in data:
-            value = data[schema_property_name]
+        for schema_field_name in data:
+            value = data[schema_field_name]
             if is_schema(value):
                 value = try_load_related_model(value)
 
-            class_attribute_name = get_class_attribute_name(schema_property_name)
+            class_attribute_name = get_class_attribute_name(schema_field_name)
             setattr(self, class_attribute_name, value)
 
     def save(self, data=None):
-        def get_schema_property_name(class_attribute_name):
-            return self._meta.attribute_name_property_name_lookup.get(class_attribute_name, class_attribute_name)
+        def get_schema_field_name(class_attribute_name):
+            return self._meta.attribute_field_name_map.get(class_attribute_name, class_attribute_name)
 
         def get_value(class_attribute_value):
             if is_schema(class_attribute_value):
@@ -56,8 +56,8 @@ class Schema(metaclass=SchemaBase):
         meta = self._meta
 
         for class_attribute_name in meta.schema_fields:
-            schema_property_name = get_schema_property_name(class_attribute_name)
-            data[schema_property_name] = get_value(getattr(self, class_attribute_name))
+            schema_field_name = get_schema_field_name(class_attribute_name)
+            data[schema_field_name] = get_value(getattr(self, class_attribute_name))
 
         data[meta.instance_of_field_name] = meta.schema_class_name
 
