@@ -6,6 +6,7 @@ from ontosqlson.field import (TextField,
                               PositiveIntegerField,
                               RelationField,
                               MixField)
+from ontosqlson.field.validators import FieldValidatorBase
 
 
 class TestFieldRegistration(unittest.TestCase):
@@ -22,7 +23,8 @@ class TestFieldRegistration(unittest.TestCase):
 
     def test_field_duplication_register_same(self):
         TextField(field_name="identifications", many=True)
-        TextField(field_name="identifications", many=True)
+        with self.assertRaises(ValueError):
+            TextField(field_name="identifications", many=True)
         ontology = Ontology()
         self.assertTrue("identifications" in ontology.schema_fields)
         self.assertEqual(len(ontology.schema_fields), 1)
@@ -31,6 +33,49 @@ class TestFieldRegistration(unittest.TestCase):
         TextField(field_name="identifications", many=True)
         with self.assertRaises(ValueError):
             TextField(field_name="identifications", many=False)
+        ontology = Ontology()
+        self.assertTrue("identifications" in ontology.schema_fields)
+        self.assertEqual(len(ontology.schema_fields), 1)
+
+    def test_field_duplication_register_different_validators(self):
+        TextField(field_name="identifications", max_length=3)
+        with self.assertRaises(ValueError):
+            TextField(field_name="identifications", max_length=2)
+        ontology = Ontology()
+        self.assertTrue("identifications" in ontology.schema_fields)
+        self.assertEqual(len(ontology.schema_fields), 1)
+
+    def test_field_duplication_register_same_validators(self):
+        TextField(field_name="identifications", max_length=3)
+        with self.assertRaises(ValueError):
+            TextField(field_name="identifications", max_length=3)
+        ontology = Ontology()
+        self.assertTrue("identifications" in ontology.schema_fields)
+        self.assertEqual(len(ontology.schema_fields), 1)
+
+    def test_field_duplication_register_different_custom_validators(self):
+        class CustomValidator(FieldValidatorBase):
+            def __init__(self, val=None):
+                self.val = val
+            def is_valid(self, value):
+                return True
+
+        TextField(field_name="identifications", validators=[CustomValidator(1)])
+        with self.assertRaises(ValueError):
+            TextField(field_name="identifications", validators=[CustomValidator(2)])
+        ontology = Ontology()
+        self.assertTrue("identifications" in ontology.schema_fields)
+        self.assertEqual(len(ontology.schema_fields), 1)
+
+    def test_field_duplication_register_same_custom_validators(self):
+        class CustomValidator(FieldValidatorBase):
+            def __init__(self, val=None):
+                self.val = val
+            def is_valid(self, value):
+                return True
+        TextField(field_name="identifications", validators=[CustomValidator(1)])
+        with self.assertRaises(ValueError):
+            TextField(field_name="identifications", validators=[CustomValidator(1)])
         ontology = Ontology()
         self.assertTrue("identifications" in ontology.schema_fields)
         self.assertEqual(len(ontology.schema_fields), 1)
@@ -45,10 +90,10 @@ class TestFieldRegistration(unittest.TestCase):
 
     def test_class_field_exist(self):
         TextField(field_name="name")
-        class Thing(Schema):
-            name = TextField()
+        with self.assertRaises(ValueError):
+            class Thing(Schema):
+                name = TextField()
         ontology = Ontology()
-        thing = Thing()  # NOSONAR
         self.assertTrue("name" in ontology.schema_fields)
         self.assertEqual(len(ontology.schema_fields), 1)
 
@@ -62,14 +107,14 @@ class TestFieldRegistration(unittest.TestCase):
         self.assertEqual(len(ontology.schema_fields), 1)
 
     def test_class_field_duplicate(self):
+        name_field = TextField()
         class Thing(Schema):
             name = TextField()
 
-        class Thing2(Schema):
-            name = TextField()
+        with self.assertRaises(ValueError):
+            class Thing2(Schema):
+                name = TextField()
         ontology = Ontology()
-        thing = Thing()  # NOSONAR
-        thing2 = Thing2()  # NOSONAR
         self.assertFalse("name_other" in ontology.schema_fields)
         self.assertTrue("name" in ontology.schema_fields)
         self.assertEqual(len(ontology.schema_fields), 1)
@@ -78,12 +123,11 @@ class TestFieldRegistration(unittest.TestCase):
         class Thing(Schema):
             name = TextField(field_name="name_custom")
 
-        class Thing2(Schema):
-            name = TextField(field_name="name_custom")
+        with self.assertRaises(ValueError):
+            class Thing2(Schema):
+                name2 = TextField(field_name="name_custom")
 
         ontology = Ontology()
-        thing = Thing()  # NOSONAR
-        thing2 = Thing2()  # NOSONAR
         self.assertFalse("name" in ontology.schema_fields)
         self.assertFalse("name_other" in ontology.schema_fields)
         self.assertTrue("name_custom" in ontology.schema_fields)
@@ -111,11 +155,13 @@ class TestFieldRegistration(unittest.TestCase):
         self.assertEqual(len(ontology.schema_fields), 1)
 
     def test_class_field_messy(self):
-        TextField(field_name="name")
         name_one_field = TextField(field_name="name")
+        with self.assertRaises(ValueError):
+            TextField(field_name="name")
         ontology = Ontology()
         ontology.register_schema_fields("number_positive", PositiveIntegerField())
-        PositiveIntegerField(field_name="number_positive")
+        with self.assertRaises(ValueError):
+            PositiveIntegerField(field_name="number_positive")
 
         class Thing(Schema):
             name_one = name_one_field
@@ -123,18 +169,18 @@ class TestFieldRegistration(unittest.TestCase):
             name_three = TextField(field_name="name_custom")
             number = IntegerField()
             number_two = IntegerField(field_name="number_custom")
-            number_positive = PositiveIntegerField()
+            number_positive = ontology.schema_fields["number_positive"]
 
         ontology.register_schema_fields("mix_one", RelationField(Thing))
 
         class Thing2(Schema):
             name_one = name_one_field
-            name_two = TextField(field_name="name_two")
-            name_three = TextField(field_name="name_custom")
-            number = IntegerField()
-            number_two = IntegerField(field_name="number_custom")
-            number_positive = PositiveIntegerField()
-            mix_one = RelationField(Thing)
+            name_two = ontology.schema_fields["name_two"]
+            name_three = ontology.schema_fields["name_custom"]
+            number = ontology.schema_fields["number"]
+            number_two = ontology.schema_fields["number_custom"]
+            number_positive = ontology.schema_fields["number_positive"]
+            mix_one = ontology.schema_fields["mix_one"]
 
         class Thing3(Schema):
             mix_two = MixField([Thing, Thing2], field_name="mix_two_custom")

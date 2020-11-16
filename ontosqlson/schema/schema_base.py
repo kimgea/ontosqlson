@@ -1,7 +1,7 @@
 import inspect
 import abc
-from ontosqlson.meta import set_meta
-from ontosqlson.field.field_base import SchemaFieldBase, _register_field
+from ontosqlson.schema.meta import set_meta
+from ontosqlson.field.field_base import SchemaFieldBase
 
 
 class SchemaBase(abc.ABCMeta):
@@ -34,6 +34,13 @@ def _register_schema(new_class):
 def _register_fields(new_class):
     for key in new_class._meta.schema_fields:
         _register_field(getattr(new_class, key), key)
+
+
+def _register_field(field, field_name=None):
+    if field.field_name is not None:
+        return
+    field.field_name = field_name
+    field.schema_collection.register_schema_fields(field.field_name, field)
 
 
 def _map_field_key_and_name(new_class):

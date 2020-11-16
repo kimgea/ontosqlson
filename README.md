@@ -34,8 +34,7 @@ Going to be used for importing, storing, and displaying data in a django project
 ### Next (Both steps below propably requires some rewriting):
 1. Look for the todos in the code and refactor them
 2. Refactor some of the functions. Bad names and bade placing on some of them.
-3. Must be able to set a default value if vailidator fails, but only if set, else fail totaly. Like cutting on max tring length?
-4. Give better invalid message feed back. Not correct message right now... Gather them up, or something
+
 
 ### Later:
 

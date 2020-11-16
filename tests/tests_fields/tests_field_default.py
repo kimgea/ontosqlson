@@ -40,10 +40,10 @@ class TestFieldDefault(unittest.TestCase):
 
     def test_field_class(self):
         class Thing(Schema):
-            name = TextField(default="default")
+            name = TextField(field_name="name", default="default")
 
         class Thing2(Schema):
-            other = RelationField("Thing", default=Thing(name="name1"))
+            other = RelationField("Thing", field_name="other", default=Thing(name="name1"))
 
         thing2 = Thing2()
         self.assertEqual(thing2.other.name, "name1")
@@ -52,13 +52,13 @@ class TestFieldDefault(unittest.TestCase):
 
     def test_field_mix(self):
         class Thing(Schema):
-            name = TextField(default="default")
+            name = TextField(field_name="name", default="default")
 
         class Thing2(Schema):  # NOSONAR
-            name2 = TextField(default="default2")
+            name2 = TextField(field_name="name2", default="default2")
 
         class Thing3(Schema):
-            other = MixField(["Thing", "Thing2"], default=Thing(name="name1"))
+            other = MixField(["Thing", "Thing2"], field_name="other", default=Thing(name="name1"))
 
         thing3 = Thing3()
         self.assertEqual(thing3.other.name, "name1")

@@ -4,7 +4,7 @@ from ontosqlson.schema import Schema
 from ontosqlson.field import (TextField,
                               PositiveIntegerField,
                               RelationField)
-from ontosqlson.field.types import (RelationFieldType)
+from ontosqlson.field.field_types import (RelationFieldType)
 
 
 class TestFieldClass(unittest.TestCase):
@@ -21,8 +21,9 @@ class TestFieldClass(unittest.TestCase):
                 schema_class_name = "OtherSpecial"
                 instance_of_field_name = "is_type"
 
+        ontology = Ontology()
         class Thing(Schema):
-            name = TextField()
+            name = ontology.schema_fields["name"]
             other = RelationField(Other)
             other2 = RelationField(RelationFieldType(Other))
         thing = Thing(other=Other(name="other"), name="thing")
@@ -42,8 +43,10 @@ class TestFieldClass(unittest.TestCase):
         self.assertEqual(json_data["other"]["is_type"], "OtherSpecial")
 
     def test_field_class_inheritance(self):
+        name_field = TextField(field_name="name")
+
         class Other(Schema):
-            name = TextField()
+            name = name_field
 
         class Thing(Other):
             age = PositiveIntegerField()
@@ -53,7 +56,7 @@ class TestFieldClass(unittest.TestCase):
                 instance_of_field_name = "is_type"
 
         class Work(Schema):
-            name = TextField()
+            name = name_field
             thing = RelationField("Other")
 
         work = Work(thing=Thing(name="other", age=22), name="work")

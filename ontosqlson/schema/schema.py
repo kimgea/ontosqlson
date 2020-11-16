@@ -1,4 +1,4 @@
-from ontosqlson.schema_base import SchemaBase
+from ontosqlson.schema.schema_base import SchemaBase
 
 
 class Schema(metaclass=SchemaBase):

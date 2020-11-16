@@ -17,6 +17,8 @@ class TestSchemaMetaSettings(unittest.TestCase):
             class Meta:
                 schema_class_name = "ThingOther"
         thing = Thing()
+        self.assertTrue("ThingOther" in thing._meta.schema_collection.schema_models)
+        self.assertFalse("Thing" in thing._meta.schema_collection.schema_models)
         json_data = {"instance_of": "ThingOther", "name": "name1"}
         self.assertIsNone(thing.name)
         thing.load(json_data)
@@ -74,20 +76,23 @@ class TestSchemaMetaSettings(unittest.TestCase):
         self.assertEqual(json_data2["is_type"], "Thing")
 
     def test_meta_parents_count(self):
+        name_field = TextField()
+        number2_field = IntegerField(field_name="number2")
+
         class NameThing(Schema):
-            name = TextField()
+            name = name_field
 
         class NumberThing(NameThing):
             number = IntegerField()
 
         class NumberThing2(NumberThing):
-            number2 = IntegerField()
+            number2 = number2_field
 
         class NameThing2(Schema):
-            name = TextField()
+            name = name_field
 
         class NumberThing3(NameThing2, NumberThing2):
-            number2 = IntegerField()
+            number2 = number2_field
 
         name_thing = NameThing(name="name_1")
         number_thing = NumberThing(name="name_2", number=2)

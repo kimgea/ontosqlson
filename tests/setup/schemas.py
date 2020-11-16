@@ -14,12 +14,12 @@ ontology = Ontology()
 
 
 # Duplicate from setup.field
-year_field = IntegerField(field_name="year", default=1985)
-tv_season = RelationField("TVSeason", field_name="tv_season")
+year_field = ontology.schema_fields["year"]
+tv_season = ontology.schema_fields["tv_season"]
 
 
 class Thing(Schema):
-    name = TextField(field_name="name")  # exist when creating new
+    name = ontology.schema_fields["name"]
     identifications = ontology.schema_fields["identifications"]  # get existing
 
     class Meta:
@@ -39,7 +39,7 @@ class TVSeries(CreativeWork):
 
 
 class TVSeason(CreativeWork):
-    tv_series_custom_name = RelationField("TVSeries", field_name="tv_series")  # TODO: Not loading corectly, or dumping. Uses tv_series_custom_name instead of tv_series
+    tv_series_custom_name = ontology.schema_fields["tv_series"]
 
 
 class TVEpisode(CreativeWork):
