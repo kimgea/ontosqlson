@@ -42,6 +42,7 @@ json_import2 = dict(
                 other_titles=["title2", "title1"]
             )
 
+
 class ThingBase(Schema):
     # id = TextField()
     url = TextField()

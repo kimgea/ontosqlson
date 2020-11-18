@@ -80,4 +80,27 @@ class TestSchemaInheritance(unittest.TestCase):
         self.assertEqual(len(person._meta.parents), 1)
 
 
+    def test_schema_inheritance_multiple(self):
+        class AgeThing(Schema):
+            age = IntegerField()
+
+        class NameThing(Schema):
+            name = TextField()
+
+        class Person(AgeThing, NameThing):
+            place = TextField()
+
+
+        person = Person(age=30, name="p1", place="place1")
+        person2 = Person(age=15, name="p2", place="place2")
+
+        self.assertEqual(person.age, 30)
+        self.assertEqual(person.name, "p1")
+        self.assertEqual(person.place, "place1")
+
+        self.assertEqual(person2.age, 15)
+        self.assertEqual(person2.name, "p2")
+        self.assertEqual(person2.place, "place2")
+
+
 
