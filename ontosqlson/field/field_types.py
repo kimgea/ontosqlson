@@ -25,8 +25,6 @@ class PositiveIntegerFieldType(SchemaFieldTypeDataType, SchemaFieldTypeBase):
 
 class RelationFieldType(SchemaFieldTypeClass, SchemaFieldTypeBase):
     def __init__(self, range_type, validators=None, fix_value=False):
-        if hasattr(range_type, "_meta"):
-            range_type = range_type._meta.schema_class_name
         super().__init__("text", validators=validators, fix_value=fix_value)
         self.range_type = range_type
         self.validators.append(IsSchemaTypeValidator(self.range_type))

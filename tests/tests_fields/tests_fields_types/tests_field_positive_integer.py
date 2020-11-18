@@ -1,5 +1,4 @@
 import unittest
-from ontosqlson.ontology import Ontology
 from ontosqlson.schema import Schema
 from ontosqlson.field import (TextField,
                               PositiveIntegerField,
@@ -8,10 +7,6 @@ from ontosqlson.field.field_types import (RelationFieldType)
 
 
 class TestFieldPositiveInteger(unittest.TestCase):
-    def setUp(self):
-        ontology = Ontology()
-        ontology.schema_fields.clear()
-        ontology.schema_models.clear()
 
     def test_field_positive_integer(self):
         class Thing(Schema):

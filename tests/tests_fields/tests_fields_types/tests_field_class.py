@@ -1,5 +1,4 @@
 import unittest
-from ontosqlson.ontology import Ontology
 from ontosqlson.schema import Schema
 from ontosqlson.field import (TextField,
                               PositiveIntegerField,
@@ -8,10 +7,6 @@ from ontosqlson.field.field_types import (RelationFieldType)
 
 
 class TestFieldClass(unittest.TestCase):
-    def setUp(self):
-        ontology = Ontology()
-        ontology.schema_fields.clear()
-        ontology.schema_models.clear()
 
     def test_field_class(self):
         class Other(Schema):
@@ -21,9 +16,8 @@ class TestFieldClass(unittest.TestCase):
                 schema_class_name = "OtherSpecial"
                 instance_of_field_name = "is_type"
 
-        ontology = Ontology()
         class Thing(Schema):
-            name = ontology.schema_fields["name"]
+            name = TextField()
             other = RelationField(Other)
             other2 = RelationField(RelationFieldType(Other))
         thing = Thing(other=Other(name="other"), name="thing")
@@ -57,7 +51,7 @@ class TestFieldClass(unittest.TestCase):
 
         class Work(Schema):
             name = name_field
-            thing = RelationField("Other")
+            thing = RelationField(Other)
 
         work = Work(thing=Thing(name="other", age=22), name="work")
         self.assertEqual(work.name, "work")

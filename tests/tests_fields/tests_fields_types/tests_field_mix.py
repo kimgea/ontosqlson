@@ -1,5 +1,4 @@
 import unittest
-from ontosqlson.ontology import Ontology
 from ontosqlson.schema import Schema
 from ontosqlson.field import (TextField,
                               MixField)
@@ -7,10 +6,6 @@ from ontosqlson.field.field_types import (TextFieldType)
 
 
 class TestFieldMix(unittest.TestCase):
-    def setUp(self):
-        ontology = Ontology()
-        ontology.schema_fields.clear()
-        ontology.schema_models.clear()
 
     def test_field_mix_with_string(self):
         class Other(Schema):

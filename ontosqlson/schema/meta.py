@@ -1,26 +1,19 @@
 from collections import OrderedDict
 
-from ontosqlson.ontology import Ontology
-
 
 class Meta:
     def __init__(self, owner=None):
-
-        # self.local_fields = list()  # TODO: Nesesary to generate json ontology schemas. Can wait
-        self.model = owner
-        self.concrete_model = owner  # TODO: remove model concrete_model
-        self.object_name = self.model.__name__
+        self.concrete_model = owner
+        self.object_name = self.concrete_model.__name__
         self.schema_class_name = self.object_name
         self.instance_of_field_name = "instance_of"
+        self.identification_field_name = "id"
         self.parents = OrderedDict()
         self.ascendants = dict()
         self.field_attribute_name_map = {}
         self.attribute_field_name_map = {}
-        self.schema_collection = Ontology()
-
         self.schema_fields = []
         self.regular_attributes = []
-
 
 
 def set_meta(owner, custom_meta, parents):
@@ -36,16 +29,6 @@ def _set_valid_parents(new_meta, parents):
         if parent.__name__ == "Schema" or not hasattr(parent, "_meta"):
            continue
         new_meta.parents[parent._meta.object_name] = parent
-
-
-def _update_meta_with_custom_meta(new_meta, custom_meta):
-    if not custom_meta:
-        return
-
-    for attr_name in custom_meta.__dict__:
-        if attr_name.startswith('__'):
-            continue  # Skipp python specific stuff
-        setattr(new_meta, attr_name, custom_meta.__dict__[attr_name])
 
 
 def _set_ascendants(meta):
@@ -67,3 +50,11 @@ def _set_ascendants(meta):
     return meta.ascendants
 
 
+def _update_meta_with_custom_meta(new_meta, custom_meta):
+    if not custom_meta:
+        return
+
+    for attr_name in custom_meta.__dict__:
+        if attr_name.startswith('__'):
+            continue  # Skipp python specific stuff
+        setattr(new_meta, attr_name, custom_meta.__dict__[attr_name])

@@ -64,4 +64,4 @@ class IsSchemaTypeValidator(FieldValidatorBase):
         self.range_type = range_type
 
     def is_valid(self, value):
-        return hasattr(value, "_meta") and value._is_schema_type(self.range_type)
+        return hasattr(value, "_meta")  # and value._is_schema_type(self.range_type)

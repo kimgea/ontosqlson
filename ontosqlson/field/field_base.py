@@ -1,16 +1,15 @@
 from weakref import WeakKeyDictionary
-from ontosqlson.ontology import Ontology
 from ontosqlson.field.field_type_base import SchemaFieldTypeClass, SchemaFieldTypeBase
 
 
 class SchemaFieldBase(object):
     def __init__(self, range_includes, field_name=None, default=None, many=False, *args, **kwargs):
         self.values = WeakKeyDictionary()
-        self.schema_collection = Ontology()
 
         self.field_name = field_name
         self._many = many
         self.default = default
+        self.range_includes = range_includes
 
         self.range_includes = []
         self.range_includes_data_types = []
@@ -19,8 +18,12 @@ class SchemaFieldBase(object):
 
         _ensure_validate_default_value(self)
 
-        if self.field_name:
-            _register_field(self)
+    def get_linked_schema_model(self, schema_name):
+        for rage_obj in self.range_includes:
+            range_is_schema = issubclass(type(rage_obj), SchemaFieldTypeClass)
+            if range_is_schema and rage_obj.range_type._meta.schema_class_name == schema_name:
+                return rage_obj.range_type
+        return None
 
     def __get__(self, instance, owner):
         if instance is None:
@@ -47,17 +50,6 @@ def _set_range_includes(field, range_includes):
             field.range_includes_schema_types.append(i)
         else:
             field.range_includes_data_types.append(i)
-
-
-def _set_field_name_if_not_set(field, field_name=None):
-    if field.field_name is None:
-        field.field_name = field_name
-
-
-def _register_field(field):
-    if field.field_name is None:
-        return
-    field.schema_collection.register_schema_fields(field.field_name, field)
 
 
 def _ensure_validate_default_value(field):

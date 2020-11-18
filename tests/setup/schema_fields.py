@@ -1,4 +1,3 @@
-from ontosqlson.ontology import Ontology
 from ontosqlson.field import (TextField,
                               IntegerField,
                               RelationField,
@@ -6,10 +5,6 @@ from ontosqlson.field import (TextField,
 
 
 def init_fields():
-
-    ontology = Ontology()
-
-    ontology.register_schema_fields("name", TextField())
     TextField(field_name="identifications", many=True)
     year_field = IntegerField(field_name="year", default=1985)  # NOSONAR
     # PositiveIntegerField(field_name="age")

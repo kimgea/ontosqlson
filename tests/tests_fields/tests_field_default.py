@@ -1,5 +1,4 @@
 import unittest
-from ontosqlson.ontology import Ontology
 from ontosqlson.schema import Schema
 from ontosqlson.field import (TextField,
                               IntegerField,
@@ -9,10 +8,6 @@ from ontosqlson.field import (TextField,
 
 
 class TestFieldDefault(unittest.TestCase):
-    def setUp(self):
-        ontology = Ontology()
-        ontology.schema_fields.clear()
-        ontology.schema_models.clear()
 
     def test_field_text(self):
         class Thing(Schema):
@@ -43,7 +38,7 @@ class TestFieldDefault(unittest.TestCase):
             name = TextField(field_name="name", default="default")
 
         class Thing2(Schema):
-            other = RelationField("Thing", field_name="other", default=Thing(name="name1"))
+            other = RelationField(Thing, field_name="other", default=Thing(name="name1"))
 
         thing2 = Thing2()
         self.assertEqual(thing2.other.name, "name1")
@@ -58,7 +53,7 @@ class TestFieldDefault(unittest.TestCase):
             name2 = TextField(field_name="name2", default="default2")
 
         class Thing3(Schema):
-            other = MixField(["Thing", "Thing2"], field_name="other", default=Thing(name="name1"))
+            other = MixField([Thing, Thing2], field_name="other", default=Thing(name="name1"))
 
         thing3 = Thing3()
         self.assertEqual(thing3.other.name, "name1")

@@ -1,15 +1,10 @@
 import unittest
-from ontosqlson.ontology import Ontology
 from ontosqlson.schema import Schema
 from ontosqlson.field import (TextField,
                               IntegerField)
 
 
 class TestSchemaMetaSettings(unittest.TestCase):
-    def setUp(self):
-        ontology = Ontology()
-        ontology.schema_fields.clear()
-        ontology.schema_models.clear()
 
     def test_schema_class_name_custom(self):
         class Thing(Schema):
@@ -17,8 +12,8 @@ class TestSchemaMetaSettings(unittest.TestCase):
             class Meta:
                 schema_class_name = "ThingOther"
         thing = Thing()
-        self.assertTrue("ThingOther" in thing._meta.schema_collection.schema_models)
-        self.assertFalse("Thing" in thing._meta.schema_collection.schema_models)
+        self.assertTrue("ThingOther" == thing._meta.schema_class_name)
+        self.assertFalse("Thing" == thing._meta.schema_class_name)
         json_data = {"instance_of": "ThingOther", "name": "name1"}
         self.assertIsNone(thing.name)
         thing.load(json_data)
@@ -59,7 +54,6 @@ class TestSchemaMetaSettings(unittest.TestCase):
         self.assertEqual(name_thing._meta.schema_class_name, "ThingOther2")
         self.assertEqual(number_thing._meta.schema_class_name, "NumberThing")
         self.assertEqual(number_thing2._meta.schema_class_name, "ThingOther")
-
 
     def test_instance_of_field_name_custom(self):
         class Thing(Schema):

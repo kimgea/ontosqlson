@@ -1,18 +1,10 @@
 import unittest
-from ontosqlson.ontology import Ontology
 from ontosqlson.schema import Schema
 from ontosqlson.field import (TextField,
                               IntegerField)
 
 
-# TODO: schema should not be alowed to have a field that already exist in one of its ancestors
-
-
 class TestSchemaInheritance(unittest.TestCase):
-    def setUp(self):
-        ontology = Ontology()
-        ontology.schema_fields.clear()
-        ontology.schema_models.clear()
 
     def test_schema_inheritance_basic(self):
         class NameThing(Schema):
@@ -37,7 +29,6 @@ class TestSchemaInheritance(unittest.TestCase):
         self.assertEqual(number_thing.name, "name2")
         self.assertEqual(number_thing.number, 2)
         self.assertEqual(name_thing.name, "name1")
-
 
     def test_schema_inheritance_init_subclass(self):
         class NameThing(Schema):
@@ -68,7 +59,6 @@ class TestSchemaInheritance(unittest.TestCase):
         self.assertEqual(number_thing2.number2, 3)
 
         self.assertEqual(len(name_thing._registry), 1)
-
 
     def test_schema_inheritance_mixin(self):
         class MixIn:
