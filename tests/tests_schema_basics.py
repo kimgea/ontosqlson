@@ -1,18 +1,10 @@
 import unittest
-from ontosqlson.ontology import Ontology
 from ontosqlson.schema import Schema
 from ontosqlson.field import (TextField)
 import tests.setup.schemas as schema_models
 
 
-# TODO: schema should not be alowed to have a field that already exist in one of its ancestors
-
-
 class TestSchemaBasics(unittest.TestCase):
-    def setUp(self):
-        ontology = Ontology()
-        ontology.schema_fields.clear()
-        ontology.schema_models.clear()
 
     def test_schema_basics_module(self):
         class Thing2(Schema):

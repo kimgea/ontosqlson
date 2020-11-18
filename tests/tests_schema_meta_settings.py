@@ -1,15 +1,10 @@
 import unittest
-from ontosqlson.ontology import Ontology
 from ontosqlson.schema import Schema
 from ontosqlson.field import (TextField,
                               IntegerField)
 
 
 class TestSchemaMetaSettings(unittest.TestCase):
-    def setUp(self):
-        ontology = Ontology()
-        ontology.schema_fields.clear()
-        ontology.schema_models.clear()
 
     def test_schema_class_name_custom(self):
         class Thing(Schema):
@@ -17,6 +12,8 @@ class TestSchemaMetaSettings(unittest.TestCase):
             class Meta:
                 schema_class_name = "ThingOther"
         thing = Thing()
+        self.assertTrue("ThingOther" == thing._meta.schema_class_name)
+        self.assertFalse("Thing" == thing._meta.schema_class_name)
         json_data = {"instance_of": "ThingOther", "name": "name1"}
         self.assertIsNone(thing.name)
         thing.load(json_data)
@@ -58,7 +55,6 @@ class TestSchemaMetaSettings(unittest.TestCase):
         self.assertEqual(number_thing._meta.schema_class_name, "NumberThing")
         self.assertEqual(number_thing2._meta.schema_class_name, "ThingOther")
 
-
     def test_instance_of_field_name_custom(self):
         class Thing(Schema):
             name = TextField()
@@ -74,20 +70,23 @@ class TestSchemaMetaSettings(unittest.TestCase):
         self.assertEqual(json_data2["is_type"], "Thing")
 
     def test_meta_parents_count(self):
+        name_field = TextField()
+        number2_field = IntegerField(field_name="number2")
+
         class NameThing(Schema):
-            name = TextField()
+            name = name_field
 
         class NumberThing(NameThing):
             number = IntegerField()
 
         class NumberThing2(NumberThing):
-            number2 = IntegerField()
+            number2 = number2_field
 
         class NameThing2(Schema):
-            name = TextField()
+            name = name_field
 
         class NumberThing3(NameThing2, NumberThing2):
-            number2 = IntegerField()
+            number2 = number2_field
 
         name_thing = NameThing(name="name_1")
         number_thing = NumberThing(name="name_2", number=2)

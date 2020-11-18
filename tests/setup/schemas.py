@@ -1,8 +1,8 @@
-from ontosqlson.ontology import Ontology
 from ontosqlson.field import (TextField,
                               IntegerField,
                               PositiveIntegerField,
-                              RelationField)
+                              RelationField,
+                              MixField)
 from ontosqlson.schema import Schema
 
 from .schema_fields import init_fields
@@ -10,17 +10,17 @@ from .schema_fields import init_fields
 
 init_fields()
 
-ontology = Ontology()
+
 
 
 # Duplicate from setup.field
-year_field = IntegerField(field_name="year", default=1985)
-tv_season = RelationField("TVSeason", field_name="tv_season")
+year_field = IntegerField(field_name="year", default=1985)  # NOSONAR
+tv_season = RelationField("TVSeason", field_name="tv_season")  # NOSONAR
 
 
 class Thing(Schema):
-    name = TextField(field_name="name")  # exist when creating new
-    identifications = ontology.schema_fields["identifications"]  # get existing
+    name = TextField()
+    identifications = TextField(field_name="identifications", many=True)
 
     class Meta:
         schema_class_name = "Thing"
@@ -39,10 +39,10 @@ class TVSeries(CreativeWork):
 
 
 class TVSeason(CreativeWork):
-    tv_series_custom_name = RelationField("TVSeries", field_name="tv_series")  # TODO: Not loading corectly, or dumping. Uses tv_series_custom_name instead of tv_series
+    tv_series_custom_name = RelationField("TVSeries", field_name="tv_series")
 
 
 class TVEpisode(CreativeWork):
-    tv_series = ontology.schema_fields["tv_series"]
+    tv_series = RelationField("TVSeries", field_name="tv_series")
     tv_season = tv_season
-    test = ontology.schema_fields["test"]
+    test = MixField(["TVSeries", "TVSeason"], field_name="test")

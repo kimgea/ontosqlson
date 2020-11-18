@@ -2,6 +2,12 @@ class FieldValidatorBase:
     def is_valid(self, value):
         return True
 
+    def should_fix_it(self):
+        return False
+
+    def fix_it(self, value):
+        return value
+
 
 class IsStringValidator(FieldValidatorBase):
     def is_valid(self, value):
@@ -19,6 +25,12 @@ class GreaterThanValidator(FieldValidatorBase):
 
     def is_valid(self, value):
         return value >= self.min_value
+
+    def should_fix_it(self):
+        return True
+
+    def fix_it(self, value):
+        return self.min_value
 
 
 class MaxLengthValidator(FieldValidatorBase):
@@ -40,10 +52,16 @@ class MaxLengthValidator(FieldValidatorBase):
     def is_valid(self, value):
         return self.max_length == 0 or len(value) <= self.max_length
 
+    def should_fix_it(self):
+        return True
+
+    def fix_it(self, value):
+        return value[:self.max_length]
+
 
 class IsSchemaTypeValidator(FieldValidatorBase):
     def __init__(self, range_type=None):
         self.range_type = range_type
 
     def is_valid(self, value):
-        return hasattr(value, "_meta") and value._is_schema_type(self.range_type)
+        return hasattr(value, "_meta")  # and value._is_schema_type(self.range_type)

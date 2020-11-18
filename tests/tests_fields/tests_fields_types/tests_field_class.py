@@ -1,17 +1,12 @@
 import unittest
-from ontosqlson.ontology import Ontology
 from ontosqlson.schema import Schema
 from ontosqlson.field import (TextField,
                               PositiveIntegerField,
                               RelationField)
-from ontosqlson.field.types import (RelationFieldType)
+from ontosqlson.field.field_types import (RelationFieldType)
 
 
 class TestFieldClass(unittest.TestCase):
-    def setUp(self):
-        ontology = Ontology()
-        ontology.schema_fields.clear()
-        ontology.schema_models.clear()
 
     def test_field_class(self):
         class Other(Schema):
@@ -42,8 +37,10 @@ class TestFieldClass(unittest.TestCase):
         self.assertEqual(json_data["other"]["is_type"], "OtherSpecial")
 
     def test_field_class_inheritance(self):
+        name_field = TextField(field_name="name")
+
         class Other(Schema):
-            name = TextField()
+            name = name_field
 
         class Thing(Other):
             age = PositiveIntegerField()
@@ -53,8 +50,8 @@ class TestFieldClass(unittest.TestCase):
                 instance_of_field_name = "is_type"
 
         class Work(Schema):
-            name = TextField()
-            thing = RelationField("Other")
+            name = name_field
+            thing = RelationField(Other)
 
         work = Work(thing=Thing(name="other", age=22), name="work")
         self.assertEqual(work.name, "work")
