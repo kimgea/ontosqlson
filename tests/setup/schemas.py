@@ -1,9 +1,9 @@
-from ontosqlson.field import (TextField,
-                              IntegerField,
-                              PositiveIntegerField,
-                              RelationField,
-                              MixField)
-from ontosqlson.schema import Schema
+from entschema.field import (TextField,
+                             IntegerField,
+                             PositiveIntegerField,
+                             RelationField,
+                             MixField)
+from entschema.schema import Schema
 
 from .schema_fields import init_fields
 

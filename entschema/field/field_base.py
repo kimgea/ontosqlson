@@ -1,5 +1,5 @@
 from weakref import WeakKeyDictionary
-from ontosqlson.field.field_type_base import SchemaFieldTypeClass, SchemaFieldTypeBase
+from entschema.field.field_type_base import SchemaFieldTypeClass, SchemaFieldTypeBase
 
 
 class SchemaFieldBase(object):

@@ -1,9 +1,9 @@
-from ontosqlson.field.field_base import (SchemaFieldBase)
-from ontosqlson.field.field_type_base import SchemaFieldTypeBase
-from ontosqlson.field.field_types import (TextFieldType,
-                                          IntegerFieldType,
-                                          PositiveIntegerFieldType,
-                                          RelationFieldType)
+from entschema.field.field_base import (SchemaFieldBase)
+from entschema.field.field_type_base import SchemaFieldTypeBase
+from entschema.field.field_types import (TextFieldType,
+                                         IntegerFieldType,
+                                         PositiveIntegerFieldType,
+                                         RelationFieldType)
 
 
 class TextField(SchemaFieldBase):

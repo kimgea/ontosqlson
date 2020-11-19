@@ -1,7 +1,7 @@
-from ontosqlson.field import (TextField,
-                              IntegerField,
-                              RelationField,
-                              MixField)
+from entschema.field import (TextField,
+                             IntegerField,
+                             RelationField,
+                             MixField)
 
 
 def init_fields():

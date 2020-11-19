@@ -1,9 +1,9 @@
 import unittest
-from ontosqlson.schema import Schema
-from ontosqlson.field import (TextField,
-                              RelationField,
-                              MixField,
-                              IntegerField)
+from entschema.schema import Schema
+from entschema.field import (TextField,
+                             RelationField,
+                             MixField,
+                             IntegerField)
 
 
 ########################################################################################################################

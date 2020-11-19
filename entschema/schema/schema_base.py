@@ -1,8 +1,8 @@
 import inspect
 import abc
-from ontosqlson.schema.meta import set_meta
-from ontosqlson.field.field_base import SchemaFieldBase
-from ontosqlson.field.fields import TextField
+from entschema.schema.meta import set_meta
+from entschema.field.field_base import SchemaFieldBase
+from entschema.field.fields import TextField
 
 
 class SchemaBase(abc.ABCMeta):

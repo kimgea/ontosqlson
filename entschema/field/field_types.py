@@ -1,5 +1,5 @@
-from ontosqlson.field.field_type_base import SchemaFieldTypeBase, SchemaFieldTypeClass, SchemaFieldTypeDataType
-from ontosqlson.field.validators import IsStringValidator, MaxLengthValidator, IsIntegerValidator, \
+from entschema.field.field_type_base import SchemaFieldTypeBase, SchemaFieldTypeClass, SchemaFieldTypeDataType
+from entschema.field.validators import IsStringValidator, MaxLengthValidator, IsIntegerValidator, \
     GreaterThanValidator, IsSchemaTypeValidator
 
 

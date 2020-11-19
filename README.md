@@ -1,10 +1,4 @@
-# ontosqlson  (Work in progress)
+# Entschema (entschema/Python-entity-schema)  
+## (Work in progress)
 
-
-## TODO:
-
-- Required field property. Field is required.
-
-- Versioning
-
-- Find a better project name
+Creating schema mappings for entity objects. CRUD operations on entities plus validation, and mapping from and to json (an maybe other objects in the future). Supports nested entities and the same operations on them.
