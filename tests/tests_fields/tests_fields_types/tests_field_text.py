@@ -1,9 +1,9 @@
 import unittest
-from ontosqlson.schema import Schema
-from ontosqlson.field import (TextField,
-                              PositiveIntegerField,
-                              RelationField)
-from ontosqlson.field.field_types import (RelationFieldType)
+from entschema.schema import Schema
+from entschema.field import (TextField,
+                             PositiveIntegerField,
+                             RelationField)
+from entschema.field.field_types import (RelationFieldType)
 
 
 class TestFieldText(unittest.TestCase):

@@ -1,8 +1,8 @@
 import unittest
-from ontosqlson.schema import Schema
-from ontosqlson.field import (TextField,
-                              MixField)
-from ontosqlson.field.field_types import (TextFieldType)
+from entschema.schema import Schema
+from entschema.field import (TextField,
+                             MixField)
+from entschema.field.field_types import (TextFieldType)
 
 
 class TestFieldMix(unittest.TestCase):

@@ -1,8 +1,8 @@
 import unittest
 import copy
-from ontosqlson.schema import Schema
-from ontosqlson.field import (TextField,
-                              RelationField)
+from entschema.schema import Schema
+from entschema.field import (TextField,
+                             RelationField)
 
 
 json_import1 = dict(

@@ -1,6 +1,6 @@
 import unittest
-from ontosqlson.schema import Schema
-from ontosqlson.field import (TextField)
+from entschema.schema import Schema
+from entschema.field import (TextField)
 
 
 class TestFieldMany(unittest.TestCase):
